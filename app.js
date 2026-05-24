@@ -5,9 +5,10 @@
 // App State Management
 let currentSpeed = 1.0;          // Voice rate: 1.0 (Normal), 0.6 (Slow)
 let activeMode = 'practice';     // 'practice' or 'quiz'
+let activeVoiceStyle = 'kid';    // 'kid' (Cute child voice) or 'teacher' (Pure Online TTS)
 let currentVoices = [];          // Available voices array
-let selectedVoiceName = '';      // Chosen TTS Voice Name
 let isSpeaking = false;          // Speech synthesis locking
+let onlineAudio = null;          // Handle for Google Translate audio player
 
 // Quiz Game Variables
 let quizQuestions = [];          // Current randomized question queue
@@ -33,53 +34,15 @@ function getAudioContext() {
 }
 
 /* ==========================================================================
-   Voice Engine: Web Speech Synthesis API
+   Voice Engine: Dual-Style (Pure Online Teacher & High-pitch Cute Kid)
    ========================================================================== */
 
 /**
- * Loads available voices, filters for English, and populates the selector dropdown.
+ * Loads available system voices in background for local kid voice selection.
  */
 function loadVoices() {
   if (typeof speechSynthesis === 'undefined') return;
-
   currentVoices = speechSynthesis.getVoices();
-  const voiceSelect = document.getElementById('voice-select');
-  if (!voiceSelect) return;
-
-  // Clear previous options
-  voiceSelect.innerHTML = '';
-
-  // Filter for English voices (en) and arrange them
-  const englishVoices = currentVoices.filter(voice => voice.lang.toLowerCase().startsWith('en'));
-
-  if (englishVoices.length === 0) {
-    const opt = document.createElement('option');
-    opt.value = "";
-    opt.textContent = "Default English Voice";
-    voiceSelect.appendChild(opt);
-    return;
-  }
-
-  // Populate options
-  englishVoices.forEach(voice => {
-    const option = document.createElement('option');
-    option.value = voice.name;
-    option.textContent = `${voice.name} (${voice.lang})`;
-    
-    // Auto-select standard natural voices if possible
-    if (voice.name.includes('Natural') || voice.name.includes('Google') || voice.name.includes('Zira') || voice.name.includes('Samantha')) {
-      option.selected = true;
-      selectedVoiceName = voice.name;
-    }
-    
-    voiceSelect.appendChild(option);
-  });
-
-  // Set selected voice to the active default option
-  if (!selectedVoiceName && englishVoices.length > 0) {
-    selectedVoiceName = englishVoices[0].name;
-    voiceSelect.value = selectedVoiceName;
-  }
 }
 
 // Bind loadVoices to speech synthesis events
@@ -92,15 +55,6 @@ if (typeof speechSynthesis !== 'undefined') {
 // Initial voice load call
 document.addEventListener('DOMContentLoaded', () => {
   loadVoices();
-  
-  // Connect voice dropdown change listener
-  const voiceSelect = document.getElementById('voice-select');
-  if (voiceSelect) {
-    voiceSelect.addEventListener('change', (e) => {
-      selectedVoiceName = e.target.value;
-      playSynthesizerSound('click');
-    });
-  }
 
   // Bind Repeat button
   document.getElementById('btn-repeat').addEventListener('click', () => {
@@ -109,43 +63,152 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
-  // Setup click triggers on dropdowns to initialize audio context
+  // Setup click triggers to initialize audio context
   document.addEventListener('click', () => {
     getAudioContext();
   }, { once: true });
 });
 
 /**
+ * Switch voice style between 'kid' and 'teacher'.
+ * @param {string} style - 'kid' or 'teacher'
+ */
+function setVoiceStyle(style) {
+  activeVoiceStyle = style;
+  
+  document.getElementById('voice-style-kid').classList.toggle('active', style === 'kid');
+  document.getElementById('voice-style-teacher').classList.toggle('active', style === 'teacher');
+  
+  playSynthesizerSound('click');
+}
+
+/**
  * Universal Speak Function.
- * Pronounces a given text with customized cartoon-like pitch and selected speed.
- * @param {string} text - The string text to synthesize.
- * @param {function} onEndCallback - Optional callback executed when speaking stops.
+ * Directs speech to Google Online Teacher TTS or Cute Kid System Synthesis based on style.
+ * @param {string} text - The text to speak.
+ * @param {function} onEndCallback - Callback executed when speaking finishes.
  */
 function speak(text, onEndCallback = null) {
-  if (typeof speechSynthesis === 'undefined') return;
-
-  // Cancel any ongoing speech
-  speechSynthesis.cancel();
-
-  const utterance = new SpeechSynthesisUtterance(text);
-  
-  // Find selected voice object
-  if (selectedVoiceName) {
-    const matchedVoice = currentVoices.find(voice => voice.name === selectedVoiceName);
-    if (matchedVoice) {
-      utterance.voice = matchedVoice;
-    }
-  } else {
-    // Fallback: search for any english voice
-    const fallbackVoice = currentVoices.find(voice => voice.lang.toLowerCase().startsWith('en'));
-    if (fallbackVoice) {
-      utterance.voice = fallbackVoice;
-    }
+  // Cancel any active speech synthesis
+  if (typeof speechSynthesis !== 'undefined') {
+    speechSynthesis.cancel();
+  }
+  // Pause any active online audio player
+  if (onlineAudio) {
+    onlineAudio.pause();
+    onlineAudio = null;
   }
 
-  // Set child-friendly cute parameters
-  utterance.pitch = 1.35; // Slightly higher pitch for child-like friendly sound
-  utterance.rate = currentSpeed;  // Adaptive speed rate (1.0 or 0.6)
+  if (activeVoiceStyle === 'teacher') {
+    playOnlineTTS(text, onEndCallback);
+  } else {
+    speakLocalKid(text, onEndCallback);
+  }
+}
+
+/**
+ * Style 1: Pure Online Teacher TTS (High-fidelity, standard US accent)
+ */
+function playOnlineTTS(text, onEndCallback) {
+  try {
+    // Google Translate TTS URL
+    const url = `https://translate.google.com/translate_tts?ie=UTF-8&tl=en&client=tw-ob&q=${encodeURIComponent(text)}`;
+    onlineAudio = new Audio(url);
+    
+    // Support Normal (1.0) and Slow (0.6) speeds on online audio playback!
+    onlineAudio.playbackRate = currentSpeed;
+    
+    onlineAudio.onplay = () => {
+      isSpeaking = true;
+    };
+    
+    onlineAudio.onended = () => {
+      isSpeaking = false;
+      onlineAudio = null;
+      if (onEndCallback) onEndCallback();
+    };
+    
+    onlineAudio.onerror = (e) => {
+      console.warn("Online Google TTS failed, falling back to local Cute Kid voice.", e);
+      isSpeaking = false;
+      onlineAudio = null;
+      speakLocalKid(text, onEndCallback);
+    };
+    
+    onlineAudio.play().catch(err => {
+      console.warn("Audio play blocked by browser, falling back to local Cute Kid voice.", err);
+      speakLocalKid(text, onEndCallback);
+    });
+  } catch (error) {
+    console.warn("Online Audio failed, falling back.", error);
+    speakLocalKid(text, onEndCallback);
+  }
+}
+
+/**
+ * Style 2: High-pitch Cute Kid Voice (Emulated or Apple native kid voices)
+ */
+function speakLocalKid(text, onEndCallback) {
+  if (typeof speechSynthesis === 'undefined') {
+    if (onEndCallback) onEndCallback();
+    return;
+  }
+
+  const utterance = new SpeechSynthesisUtterance(text);
+  const englishVoices = currentVoices.filter(voice => voice.lang.toLowerCase().startsWith('en'));
+  let matchedVoice = null;
+  
+  // 1st Priority: Genuine, highly realistic real human children's voices!
+  // These are Apple's official high-fidelity neural child voice recordings (Sandy, Shelly, Eddy, Flo, Liam, Olivia)
+  const realChildVoiceNames = [
+    'Sandy',
+    'Shelly',
+    'Eddy',
+    'Flo',
+    'Liam',
+    'Olivia'
+  ];
+  
+  for (const name of realChildVoiceNames) {
+    const found = englishVoices.find(voice => voice.name.includes(name));
+    if (found) {
+      matchedVoice = found;
+      console.log(`Detected and activated genuine real child voice: ${found.name}`);
+      break;
+    }
+  }
+  
+  // 2nd Priority: If no real child voice is installed, use clear, warm, natural neural voices
+  if (!matchedVoice) {
+    const preferredWarmVoices = [
+      'Google US English',
+      'Google UK English Female',
+      'Samantha',
+      'Microsoft Zira',
+      'Siri',
+      'Daniel'
+    ];
+    
+    for (const name of preferredWarmVoices) {
+      const found = englishVoices.find(voice => voice.name.includes(name));
+      if (found) {
+        matchedVoice = found;
+        break;
+      }
+    }
+  }
+  
+  if (matchedVoice) {
+    utterance.voice = matchedVoice;
+  } else if (englishVoices.length > 0) {
+    utterance.voice = englishVoices[0];
+  }
+
+  // If a genuine child voice is used, we keep its native natural pitch (1.0).
+  // If it's a fallback adult voice, we apply a gentle cheerful lift (1.08).
+  const isRealChild = matchedVoice && realChildVoiceNames.some(name => matchedVoice.name.includes(name));
+  utterance.pitch = isRealChild ? 1.0 : 1.08; 
+  utterance.rate = currentSpeed * (isRealChild ? 0.95 : 0.90); // Adjust child speed
 
   utterance.onstart = () => {
     isSpeaking = true;

@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>I Can Say - Cosmic Space Adventure! 🚀</title>
+  <!-- Google Fonts for rounded, friendly kids' educational typography and premium feel -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@300..700&family=Outfit:wght@300..900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- Twinkling Star Canvas Background -->
+  <div class="stars-container">
+    <div class="twinkle-stars"></div>
+    <div class="space-dust"></div>
+  </div>
+
+  <div class="app-container">
+    <!-- Header Hero Section -->
+    <header class="app-header">
+      <div class="header-logo">
+        <span class="emoji-bounce">🚀</span>
+        <h1>I Can Say!</h1>
+        <span class="badge-cosmic">Space Explorer</span>
+      </div>
+      <p class="subtitle">Click on the characters to learn their names, or test your skills in the space quiz!</p>
+    </header>
+
+    <!-- Interactive Interactive Controls -->
+    <section class="controls-panel card-glass">
+      <div class="control-group">
+        <label class="control-label">🗣️ Voice Speed</label>
+        <div class="toggle-buttons">
+          <button id="speed-normal" class="btn-toggle active" onclick="setSpeed(1)">🏃 Normal</button>
+          <button id="speed-slow" class="btn-toggle" onclick="setSpeed(0.6)">🐢 Slow</button>
+        </div>
+      </div>
+
+      <div class="control-group active-mode-group">
+        <label class="control-label">🎯 Active Mode</label>
+        <div class="toggle-buttons">
+          <button id="mode-practice" class="btn-toggle active" onclick="setMode('practice')">📚 Click & Learn</button>
+          <button id="mode-quiz" class="btn-toggle quiz-btn" onclick="setMode('quiz')">🎮 Space Quiz!</button>
+        </div>
+      </div>
+
+      <div class="control-group voice-group">
+        <label class="control-label" for="voice-select">🎙️ TTS Voice</label>
+        <select id="voice-select" class="select-cosmic">
+          <!-- Voice options will be loaded dynamically via Javascript -->
+          <option value="">Default English Voice</option>
+        </select>
+      </div>
+    </section>
+
+    <!-- Quiz Banner Alert (Hidden by default, shown in Quiz Mode) -->
+    <section id="quiz-banner" class="quiz-banner card-glass hidden">
+      <div class="quiz-instruction">
+        <span class="quiz-question-icon">🔍</span>
+        <div class="quiz-text-container">
+          <span class="quiz-title">Space Quest!</span>
+          <h2 id="quiz-question">Listen carefully to find the astronaut!</h2>
+        </div>
+      </div>
+      <div class="quiz-actions">
+        <button id="btn-repeat" class="btn-cosmic btn-repeat">🔊 Repeat Name</button>
+        <div class="quiz-score">
+          Score: <span id="score-current">0</span> / <span id="score-total">4</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- TWO-COLUMN BOARD LAYOUT (Matches Book Layout) -->
+    <div class="main-board-layout">
+      
+      <!-- SECTION 1: Rocket Deck (Left Vertical Column) -->
+      <section class="rocket-deck-section">
+        <div class="section-title-bar">
+          <span class="section-num">1</span>
+          <h2>Rocket Cabin</h2>
+        </div>
+
+        <!-- The Vertical Yellow Rocket Frame -->
+        <div class="rocket-fuselage">
+          <!-- Rocket Nose Cone (Pointing Upwards) -->
+          <div class="rocket-nose">
+            <div class="rocket-text">I Can Say</div>
+          </div>
+
+          <!-- Passenger Portholes (Stacked Vertically from Jayla to Zack) -->
+          <div class="rocket-passengers">
+            
+            <!-- JAYLA (Top passenger near nose cone) -->
+            <div class="passenger-card" data-name="Jayla" onclick="speakCharacter('Jayla', this)">
+              <div class="porthole-ring">
+                <img class="avatar-svg" src="assets/jayla.png" alt="Jayla">
+                <!-- Rivets on frame -->
+                <div class="rivet r1"></div><div class="rivet r2"></div><div class="rivet r3"></div><div class="rivet r4"></div>
+              </div>
+              <div class="name-pill label-red">Jayla</div>
+            </div>
+
+            <!-- JOE (Second passenger) -->
+            <div class="passenger-card" data-name="Joe" onclick="speakCharacter('Joe', this)">
+              <div class="porthole-ring">
+                <img class="avatar-svg" src="assets/joe.png" alt="Joe">
+                <div class="rivet r1"></div><div class="rivet r2"></div><div class="rivet r3"></div><div class="rivet r4"></div>
+              </div>
+              <div class="name-pill label-red">Joe</div>
+            </div>
+
+            <!-- LINA (Third passenger) -->
+            <div class="passenger-card" data-name="Lina" onclick="speakCharacter('Lina', this)">
+              <div class="porthole-ring">
+                <img class="avatar-svg" src="assets/lina.png" alt="Lina">
+                <div class="rivet r1"></div><div class="rivet r2"></div><div class="rivet r3"></div><div class="rivet r4"></div>
+              </div>
+              <div class="name-pill label-red">Lina</div>
+            </div>
+
+            <!-- ZACK (Bottom passenger near tail fins) -->
+            <div class="passenger-card" data-name="Zack" onclick="speakCharacter('Zack', this)">
+              <div class="porthole-ring">
+                <img class="avatar-svg" src="assets/zack.png" alt="Zack">
+                <div class="rivet r1"></div><div class="rivet r2"></div><div class="rivet r3"></div><div class="rivet r4"></div>
+              </div>
+              <div class="name-pill label-red">Zack</div>
+            </div>
+
+          </div>
+
+          <!-- Rocket Tail Fins (Left and Right sides of the base) -->
+          <div class="rocket-fin fin-left"></div>
+          <div class="rocket-fin fin-right"></div>
+          
+          <!-- Fire Exhaust Effect (Shooting downwards) -->
+          <div class="rocket-exhaust">
+            <div class="flame f1"></div>
+            <div class="flame f2"></div>
+            <div class="flame f3"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- SECTION 2: Cosmic Map (Right Column Star Grid) -->
+      <section class="galaxy-map-section">
+        <div class="section-title-bar">
+          <span class="section-num">2</span>
+          <h2>Cosmic Galaxy</h2>
+        </div>
+
+        <!-- The Map Area -->
+        <div class="space-map card-glass" id="space-map">
+          
+          <!-- Vector Dotted Paths (Connecting Astronauts) -->
+          <svg class="map-paths-svg" viewBox="0 0 800 600" preserveAspectRatio="none">
+            <!-- Winding grid maze paths exactly matching the book -->
+            <path d="M 304 132 H 160 V 432 H 480 V 468 H 560 V 228 H 450 V 132 H 304" class="path-dotted" />
+          </svg>
+
+          <!-- Decorative Elements from the book -->
+
+          <!-- 1. Giant Heart in the center -->
+          <div class="map-element central-heart pulse-glow" style="left: 48%; top: 58%; transform: translate(-50%, -50%);">
+            <svg viewBox="0 0 100 100" class="svg-heart">
+              <path d="M 50 90 C 50 90 90 60 90 35 C 90 15 70 5 50 25 C 30 5 10 15 10 35 C 10 60 50 90 50 90 Z" fill="#ff4b5c" />
+            </svg>
+          </div>
+
+          <!-- 2. Saturn Planet -->
+          <div class="map-element floating-slow" style="left: 88%; top: 68%;">
+            <svg width="60" height="40" viewBox="0 0 60 40">
+              <!-- Planet Rings -->
+              <ellipse cx="30" cy="20" rx="28" ry="8" fill="none" stroke="#2dd4bf" stroke-width="4" transform="rotate(-15, 30, 20)" />
+              <!-- Planet Body -->
+              <circle cx="30" cy="20" r="14" fill="#a7f3d0" />
+              <path d="M 18 16 Q 30 20 42 16" fill="none" stroke="#34d399" stroke-width="2" />
+            </svg>
+          </div>
+
+          <!-- 3. Cookie Planet / Moon -->
+          <div class="map-element floating-mid" style="left: 8%; top: 68%;">
+            <svg width="45" height="45" viewBox="0 0 45 45">
+              <circle cx="22" cy="22" r="20" fill="#fcd34d" />
+              <!-- Craters -->
+              <circle cx="12" cy="16" r="3" fill="#d97706" opacity="0.7" />
+              <circle cx="28" cy="14" r="4.5" fill="#d97706" opacity="0.7" />
+              <circle cx="18" cy="30" r="4.5" fill="#d97706" opacity="0.7" />
+              <circle cx="30" cy="28" r="2.5" fill="#d97706" opacity="0.7" />
+            </svg>
+          </div>
+
+          <!-- 4. Purple Floating Alien -->
+          <div class="map-element bobbing-alien" style="left: 45%; top: 8%;">
+            <svg width="50" height="50" viewBox="0 0 50 50">
+              <path d="M 15 35 C 12 25 15 12 25 12 C 35 12 38 25 35 35 C 38 42 32 46 25 42 C 18 46 12 42 15 35 Z" fill="#c084fc" />
+              <!-- Eyes on tentacles -->
+              <path d="M 20 12 Q 17 4 15 6" fill="none" stroke="#c084fc" stroke-width="3" stroke-linecap="round" />
+              <circle cx="15" cy="5" r="4" fill="#ffffff" />
+              <circle cx="15" cy="5" r="1.5" fill="#000000" />
+              
+              <path d="M 30 12 Q 33 4 35 6" fill="none" stroke="#c084fc" stroke-width="3" stroke-linecap="round" />
+              <circle cx="35" cy="5" r="4" fill="#ffffff" />
+              <circle cx="35" cy="5" r="1.5" fill="#000000" />
+
+              <!-- Alien Eye (main) -->
+              <circle cx="25" cy="24" r="6" fill="#ffffff" />
+              <circle cx="25" cy="24" r="2.5" fill="#701a75" />
+              <!-- Smile -->
+              <path d="M 21 32 Q 25 36 29 32" fill="none" stroke="#000000" stroke-width="1.5" stroke-linecap="round" />
+              <!-- Little arms -->
+              <path d="M 13 28 Q 7 28 9 32" fill="none" stroke="#c084fc" stroke-width="2.5" stroke-linecap="round" />
+              <path d="M 37 28 Q 43 28 41 32" fill="none" stroke="#c084fc" stroke-width="2.5" stroke-linecap="round" />
+            </svg>
+          </div>
+
+          <!-- 5. Pink Squid Worm Alien -->
+          <div class="map-element wiggling-alien" style="left: 18%; top: 58%;">
+            <svg width="40" height="50" viewBox="0 0 40 50">
+              <!-- Worm body -->
+              <path d="M 20 5 Q 12 12 20 20 Q 28 28 20 35 Q 15 42 22 45" fill="none" stroke="#f472b6" stroke-width="8" stroke-linecap="round" />
+              <!-- Eyes -->
+              <circle cx="16" cy="8" r="3.5" fill="#ffffff" />
+              <circle cx="16" cy="8" r="1.5" fill="#000000" />
+              <circle cx="24" cy="10" r="3.5" fill="#ffffff" />
+              <circle cx="24" cy="10" r="1.5" fill="#000000" />
+            </svg>
+          </div>
+
+          <!-- 6. Green Three-Eyed Alien -->
+          <div class="map-element peeking-alien" style="left: 72%; top: 68%;">
+            <svg width="50" height="50" viewBox="0 0 50 50">
+              <!-- Round head -->
+              <circle cx="25" cy="30" r="15" fill="#4ade80" />
+              <!-- Three Eyes -->
+              <circle cx="15" cy="22" r="5" fill="#ffffff" stroke="#166534" stroke-width="1" />
+              <circle cx="15" cy="22" r="2" fill="#000000" />
+              <circle cx="25" cy="18" r="6" fill="#ffffff" stroke="#166534" stroke-width="1" />
+              <circle cx="25" cy="18" r="2.5" fill="#000000" />
+              <circle cx="35" cy="22" r="5" fill="#ffffff" stroke="#166534" stroke-width="1" />
+              <circle cx="35" cy="22" r="2" fill="#000000" />
+              <!-- Smile -->
+              <path d="M 20 35 Q 25 39 30 35" fill="none" stroke="#166534" stroke-width="2" stroke-linecap="round" />
+              <!-- Antennas -->
+              <path d="M 25 15 L 25 8" stroke="#4ade80" stroke-width="3" stroke-linecap="round" />
+              <circle cx="25" cy="6" r="3.5" fill="#facc15" />
+            </svg>
+          </div>
+
+          <!-- 7. Tiny Rocket / UFO -->
+          <div class="map-element floating-slow" style="left: 40%; top: 88%;">
+            <svg width="45" height="30" viewBox="0 0 45 30">
+              <ellipse cx="22.5" cy="15" rx="18" ry="8" fill="#94a3b8" />
+              <path d="M 12 15 Q 22.5 5 33 15" fill="#38bdf8" opacity="0.7" />
+              <circle cx="22.5" cy="20" r="10" fill="#cbd5e1" />
+              <circle cx="15" cy="15" r="2" fill="#facc15" />
+              <circle cx="22.5" cy="15" r="2" fill="#facc15" />
+              <circle cx="30" cy="15" r="2" fill="#facc15" />
+            </svg>
+          </div>
+
+          <!-- ASTRONAUTS (Interactive Characters scattered on the board matching book layout) -->
+
+          <!-- LINA ASTRONAUT (Top Left) -->
+          <div class="astronaut-wrapper" style="left: 38%; top: 22%;" data-name="Lina" onclick="clickAstronaut('Lina', this)">
+            <div class="astronaut-glow"></div>
+            <div class="astronaut-suit-container">
+              <svg class="astronaut-svg" viewBox="0 0 100 120">
+                <!-- Suit Body -->
+                <ellipse cx="50" cy="85" rx="20" ry="24" fill="#e2e8f0" stroke="#cbd5e1" stroke-width="2" />
+                <!-- Red/Blue shoulder stripes -->
+                <path d="M 30 78 L 33 86 M 70 78 L 67 86" stroke="#f43f5e" stroke-width="3" stroke-linecap="round" />
+                <!-- Arms -->
+                <path d="M 30 80 Q 18 90 24 102" fill="none" stroke="#e2e8f0" stroke-width="8" stroke-linecap="round" />
+                <path d="M 70 80 Q 82 90 76 102" fill="none" stroke="#e2e8f0" stroke-width="8" stroke-linecap="round" />
+                <!-- Legs -->
+                <path d="M 40 104 L 40 116 M 60 104 L 60 116" stroke="#cbd5e1" stroke-width="8" stroke-linecap="round" />
+                <!-- Space Suit control box -->
+                <rect x="42" y="78" width="16" height="14" rx="2" fill="#cbd5e1" />
+                <circle cx="46" cy="85" r="2" fill="#ec4899" />
+                <circle cx="54" cy="85" r="2" fill="#3b82f6" />
+                
+                <!-- Helmet Back -->
+                <circle cx="50" cy="50" r="33" fill="#cbd5e1" />
+                <!-- Character Face (Lina) Inside Helmet (PNG image) -->
+                <image href="assets/lina.png" x="24" y="24" width="52" height="52" />
+
+                <!-- Helmet Shield (Glossy overlay) -->
+                <circle cx="50" cy="48" r="30" fill="#38bdf8" opacity="0.18" stroke="#38bdf8" stroke-width="3" />
+                <path d="M 26 40 Q 50 24 74 40 Q 50 32 26 40 Z" fill="#ffffff" opacity="0.4" />
+              </svg>
+            </div>
+            <!-- Pop-up Bubble name -->
+            <div class="name-bubble bubble-pink hidden">Hi, I'm Lina! 👩‍🚀</div>
+          </div>
+
+          <!-- ZACK ASTRONAUT (Top Right) -->
+          <div class="astronaut-wrapper" style="left: 70%; top: 38%;" data-name="Zack" onclick="clickAstronaut('Zack', this)">
+            <div class="astronaut-glow"></div>
+            <div class="astronaut-suit-container">
+              <svg class="astronaut-svg" viewBox="0 0 100 120">
+                <!-- Suit Body -->
+                <ellipse cx="50" cy="85" rx="20" ry="24" fill="#e2e8f0" stroke="#cbd5e1" stroke-width="2" />
+                <!-- Red/Blue shoulder stripes -->
+                <path d="M 30 78 L 33 86 M 70 78 L 67 86" stroke="#ef4444" stroke-width="3" stroke-linecap="round" />
+                <!-- Arms -->
+                <path d="M 30 80 Q 18 90 24 102" fill="none" stroke="#e2e8f0" stroke-width="8" stroke-linecap="round" />
+                <path d="M 70 80 Q 82 90 76 102" fill="none" stroke="#e2e8f0" stroke-width="8" stroke-linecap="round" />
+                <!-- Legs -->
+                <path d="M 40 104 L 40 116 M 60 104 L 60 116" stroke="#cbd5e1" stroke-width="8" stroke-linecap="round" />
+                <!-- Space Suit control box -->
+                <rect x="42" y="78" width="16" height="14" rx="2" fill="#cbd5e1" />
+                <circle cx="46" cy="85" r="2" fill="#ef4444" />
+                <circle cx="54" cy="85" r="2" fill="#3b82f6" />
+                
+                <!-- Helmet Back -->
+                <circle cx="50" cy="50" r="33" fill="#cbd5e1" />
+                <!-- Character Face (Zack) Inside Helmet (PNG image) -->
+                <image href="assets/zack.png" x="24" y="24" width="52" height="52" />
+
+                <!-- Helmet Shield (Glossy overlay) -->
+                <circle cx="50" cy="48" r="30" fill="#38bdf8" opacity="0.18" stroke="#38bdf8" stroke-width="3" />
+                <path d="M 26 40 Q 50 24 74 40 Q 50 32 26 40 Z" fill="#ffffff" opacity="0.4" />
+              </svg>
+            </div>
+            <div class="name-bubble bubble-blue hidden">Hello, I'm Zack! 👨‍🚀</div>
+          </div>
+
+          <!-- JOE ASTRONAUT (Bottom Left) -->
+          <div class="astronaut-wrapper" style="left: 20%; top: 72%;" data-name="Joe" onclick="clickAstronaut('Joe', this)">
+            <div class="astronaut-glow"></div>
+            <div class="astronaut-suit-container">
+              <svg class="astronaut-svg" viewBox="0 0 100 120">
+                <!-- Suit Body -->
+                <ellipse cx="50" cy="85" rx="20" ry="24" fill="#e2e8f0" stroke="#cbd5e1" stroke-width="2" />
+                <!-- Red/Blue shoulder stripes -->
+                <path d="M 30 78 L 33 86 M 70 78 L 67 86" stroke="#10b981" stroke-width="3" stroke-linecap="round" />
+                <!-- Arms -->
+                <path d="M 30 80 Q 18 90 24 102" fill="none" stroke="#e2e8f0" stroke-width="8" stroke-linecap="round" />
+                <path d="M 70 80 Q 82 90 76 102" fill="none" stroke="#e2e8f0" stroke-width="8" stroke-linecap="round" />
+                <!-- Legs -->
+                <path d="M 40 104 L 40 116 M 60 104 L 60 116" stroke="#cbd5e1" stroke-width="8" stroke-linecap="round" />
+                <!-- Space Suit control box -->
+                <rect x="42" y="78" width="16" height="14" rx="2" fill="#cbd5e1" />
+                <circle cx="46" cy="85" r="2" fill="#10b981" />
+                <circle cx="54" cy="85" r="2" fill="#3b82f6" />
+                
+                <!-- Helmet Back -->
+                <circle cx="50" cy="50" r="33" fill="#cbd5e1" />
+                <!-- Character Face (Joe) Inside Helmet (PNG image) -->
+                <image href="assets/joe.png" x="24" y="24" width="52" height="52" />
+
+                <!-- Helmet Shield (Glossy overlay) -->
+                <circle cx="50" cy="48" r="30" fill="#38bdf8" opacity="0.18" stroke="#38bdf8" stroke-width="3" />
+                <path d="M 26 40 Q 50 24 74 40 Q 50 32 26 40 Z" fill="#ffffff" opacity="0.4" />
+              </svg>
+            </div>
+            <div class="name-bubble bubble-green hidden">Yo, I'm Joe! 👨‍🚀</div>
+          </div>
+
+          <!-- JAYLA ASTRONAUT (Bottom Right) -->
+          <div class="astronaut-wrapper" style="left: 60%; top: 78%;" data-name="Jayla" onclick="clickAstronaut('Jayla', this)">
+            <div class="astronaut-glow"></div>
+            <div class="astronaut-suit-container">
+              <svg class="astronaut-svg" viewBox="0 0 100 120">
+                <!-- Suit Body -->
+                <ellipse cx="50" cy="85" rx="20" ry="24" fill="#e2e8f0" stroke="#cbd5e1" stroke-width="2" />
+                <!-- Red/Blue shoulder stripes -->
+                <path d="M 30 78 L 33 86 M 70 78 L 67 86" stroke="#f59e0b" stroke-width="3" stroke-linecap="round" />
+                <!-- Arms -->
+                <path d="M 30 80 Q 18 90 24 102" fill="none" stroke="#e2e8f0" stroke-width="8" stroke-linecap="round" />
+                <path d="M 70 80 Q 82 90 76 102" fill="none" stroke="#e2e8f0" stroke-width="8" stroke-linecap="round" />
+                <!-- Legs -->
+                <path d="M 40 104 L 40 116 M 60 104 L 60 116" stroke="#cbd5e1" stroke-width="8" stroke-linecap="round" />
+                <!-- Space Suit control box -->
+                <rect x="42" y="78" width="16" height="14" rx="2" fill="#cbd5e1" />
+                <circle cx="46" cy="85" r="2" fill="#f59e0b" />
+                <circle cx="54" cy="85" r="2" fill="#3b82f6" />
+                
+                <!-- Helmet Back -->
+                <circle cx="50" cy="50" r="33" fill="#cbd5e1" />
+                <!-- Character Face (Jayla) Inside Helmet (PNG image) -->
+                <image href="assets/jayla.png" x="24" y="24" width="52" height="52" />
+
+                <!-- Helmet Shield (Glossy overlay) -->
+                <circle cx="50" cy="48" r="30" fill="#38bdf8" opacity="0.18" stroke="#38bdf8" stroke-width="3" />
+                <path d="M 26 40 Q 50 24 74 40 Q 50 32 26 40 Z" fill="#ffffff" opacity="0.4" />
+              </svg>
+            </div>
+            <div class="name-bubble bubble-orange hidden">Hey, I'm Jayla! 👩‍🚀</div>
+          </div>
+
+        </div>
+      </section>
+
+    </div>
+
+    <!-- Quiz Results Confetti Overlay -->
+    <div id="quiz-complete-modal" class="modal-cosmic hidden">
+      <div class="modal-content card-glass pop-in">
+        <div class="modal-icon">🏆</div>
+        <h2>Amazing Job, Space Cadet!</h2>
+        <p>You found all of our space friends! You are ready to explore the galaxy!</p>
+        <div class="stars-earned">⭐⭐⭐⭐</div>
+        <button class="btn-cosmic btn-restart" onclick="resetQuiz()">Play Again! 🔄</button>
+      </div>
+    </div>
+
+    <!-- Footer Credit -->
+    <footer class="app-footer">
+      <p>Created with 💖 for young space explorers | Interactive English Pronunciation Guide</p>
+    </footer>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>

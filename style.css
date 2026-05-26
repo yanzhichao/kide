@@ -1111,6 +1111,10 @@ body {
     top: -38px;
   }
 
+  .name-bubble.show {
+    transform: translateX(-50%) scale(1) translateY(-4px);
+  }
+
   .svg-heart {
     width: 65px;
     height: 65px;
